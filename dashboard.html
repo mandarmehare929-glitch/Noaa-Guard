@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Solar Watch - Professional Web App</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root { --neon-blue: #00d4ff; --bg-dark: #0d1117; }
+        body { background-color: var(--bg-dark); color: white; font-family: 'Segoe UI', sans-serif; margin: 0; display: flex; height: 100vh; overflow: hidden; }
+        
+        /* Sidebar Design */
+        .sidebar { width: 250px; background: rgba(255,255,255,0.03); border-right: 1px solid #333; padding: 20px; display: flex; flex-direction: column; }
+        .sidebar h2 { color: var(--neon-blue); font-size: 1.2rem; margin-bottom: 30px; }
+        .menu-item { padding: 15px; cursor: pointer; border-radius: 8px; margin-bottom: 10px; transition: 0.3s; color: #8b949e; }
+        .menu-item:hover, .menu-item.active { background: rgba(0,212,255,0.1); color: white; border-left: 4px solid var(--neon-blue); }
+
+        /* Main Content */
+        .main-content { flex: 1; padding: 30px; overflow-y: auto; }
+        .grid-container { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
+        
+        .card { background: rgba(255, 255, 255, 0.05); border-radius: 15px; padding: 20px; border: 1px solid #333; position: relative; }
+        .sun-image-box img { width: 100%; border-radius: 10px; border: 1px solid var(--neon-blue); box-shadow: 0 0 15px rgba(0,212,255,0.3); }
+
+        .speed-val { font-size: 3rem; color: var(--neon-blue); text-shadow: 0 0 20px var(--neon-blue); }
+        .noaa-badge { display: inline-block; padding: 5px 15px; border-radius: 20px; font-weight: bold; margin-top: 10px; }
+
+        @keyframes flash-red { from { background: var(--bg-dark); } to { background: #4e0000; } }
+        .alert-mode { animation: flash-red 0.8s infinite alternate !important; }
+    </style>
+</head>
+<body id="main-body">
+
+    <div class="sidebar">
+        <h2>🛰️ SOLAR WATCH PRO</h2>
+        <div class="menu-item active">Live Dashboard</div>
+        <div class="menu-item">Historical Data</div>
+        <div class="menu-item">NASA SDO Gallery</div>
+        <div class="menu-item">Settings</div>
+        <div style="margin-top: auto;">
+             <button onclick="window.location.href='index.html'" style="width:100%; background:none; border:1px solid #444; color:#8b949e; padding:10px; cursor:pointer;">Logout</button>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="grid-container">
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                    <div>
+                        <p style="color: #8b949e; margin: 0;">REAL-TIME SOLAR WIND</p>
+                        <div class="speed-val" id="speed-val">0.00 km/s</div>
+                        <div id="noaa-badge" class="noaa-badge" style="border: 1px solid #4dff88; color: #4dff88;">NOAA: G0 (Normal)</div>
+                    </div>
+                    <div id="status-text" style="font-weight: bold; color: #4dff88;">SYSTEM ONLINE</div>
+                </div>
+                <div style="height: 300px; margin-top: 20px;">
+                    <canvas id="liveChart"></canvas>
+                </div>
+                <div style="font-size: 0.8rem; color: #555; margin-top: 10px;" id="last-updated">Last Check: ---</div>
+            </div>
+
+            <div class="card sun-image-box">
+                <p style="color: #8b949e; margin-top: 0;">LIVE NASA SDO IMAGE (48h)</p>
+                <img id="sun-img" src="https://sdo.gsfc.nasa.gov/assets/img/latest/latest_512_0171.jpg" alt="Live Sun">
+                <p style="font-size: 0.7rem; color: #8b949e; margin-top: 10px;">Wavelength: 171 Å (Atmosphere)</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const alarmSound = new Audio('https://actions.google.com/sounds/v1/alarms/beep_short.ogg');
+        alarmSound.loop = true;
+
+        // Chart Setup
+        const ctx = document.getElementById('liveChart').getContext('2d');
+        const liveChart = new Chart(ctx, {
+            type: 'line',
+            data: { labels: [], datasets: [{ label: 'Speed km/s', data: [], borderColor: '#00d4ff', tension: 0.4, fill: true, backgroundColor: 'rgba(0, 212, 255, 0.05)' }] },
+            options: { responsive: true, maintainAspectRatio: false, scales: { y: { grid: { color: '#222' } }, x: { display: false } } }
+        });
+
+        async function updateApp() {
+            try {
+                const res = await fetch('https://services.swpc.noaa.gov/products/solar-wind/plasma-5-minute.json');
+                const data = await res.json();
+                const latest = data[data.length - 1];
+                const speed = parseFloat(latest[2]);
+                const now = new Date();
+
+                if (!isNaN(speed)) {
+                    document.getElementById('speed-val').innerText = speed.toFixed(2) + " km/s";
+                    document.getElementById('last-updated').innerText = "Last Update: " + now.toLocaleTimeString();
+
+                    // NOAA Logic
+                    let gScale = "G0 (Normal)", color = "#4dff88";
+                    if (speed > 500) {
+                        if (speed > 800) { gScale = "G4/G5 (EXTREME)"; color = "#ff0000"; }
+                        else if (speed > 600) { gScale = "G2 (MODERATE)"; color = "#ff9800"; }
+                        else { gScale = "G1 (MINOR)"; color = "#ffeb3b"; }
+                        
+                        document.getElementById('main-body').classList.add('alert-mode');
+                        alarmSound.play().catch(e => {});
+                    } else {
+                        document.getElementById('main-body').classList.remove('alert-mode');
+                        alarmSound.pause();
+                    }
+
+                    const badge = document.getElementById('noaa-badge');
+                    badge.innerText = "NOAA: " + gScale;
+                    badge.style.color = color; badge.style.borderColor = color;
+
+                    // Update Graph
+                    if (liveChart.data.labels.length > 20) { liveChart.data.labels.shift(); liveChart.data.datasets[0].data.shift(); }
+                    liveChart.data.labels.push(now.toLocaleTimeString());
+                    liveChart.data.datasets[0].data.push(speed);
+                    liveChart.update();
+
+                    // Refresh Sun Image every 15 mins
+                    document.getElementById('sun-img').src = "https://sdo.gsfc.nasa.gov/assets/img/latest/latest_512_0171.jpg?t=" + new Date().getTime();
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        setInterval(updateApp, 30000);
+        updateApp();
+        document.body.addEventListener('click', () => {}, {once:true});
+    </script>
+</body>
+</html>
