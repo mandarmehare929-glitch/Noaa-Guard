@@ -2,21 +2,49 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Satellite Portal - Login</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NOAA-GUARD | Restricted Access</title>
     <style>
-        body { background: #0d1117; color: white; font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .login-card { background: rgba(255,255,255,0.05); padding: 50px; border-radius: 20px; border: 1px solid #333; text-align: center; }
-        h1 { color: #00d4ff; text-shadow: 0 0 10px #00d4ff; }
-        button { background: #00d4ff; border: none; padding: 15px 30px; border-radius: 10px; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        button:hover { background: #008fb3; transform: scale(1.05); box-shadow: 0 0 20px #00d4ff; }
+        :root { --neon: #00f2ff; --bg: #020c1b; }
+        body { margin: 0; background: var(--bg); color: white; font-family: 'Orbitron', sans-serif; height: 100vh; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        .login-box { background: rgba(255,255,255,0.02); border: 1px solid var(--neon); padding: 40px; border-radius: 20px; text-align: center; box-shadow: 0 0 30px rgba(0,242,255,0.1); width: 350px; }
+        .logo-img { width: 100px; margin-bottom: 20px; filter: drop-shadow(0 0 10px var(--neon)); }
+        h2 { font-size: 1.2rem; letter-spacing: 3px; margin-bottom: 30px; }
+        .input-group { margin-bottom: 20px; text-align: left; }
+        input { width: 100%; background: transparent; border: 1px solid rgba(0,242,255,0.3); padding: 12px; color: white; border-radius: 5px; outline: none; box-sizing: border-box; }
+        input:focus { border-color: var(--neon); box-shadow: 0 0 10px rgba(0,242,255,0.3); }
+        .btn { width: 100%; background: var(--neon); color: black; border: none; padding: 12px; font-weight: bold; border-radius: 5px; cursor: pointer; transition: 0.3s; letter-spacing: 2px; }
+        .btn:hover { background: #fff; box-shadow: 0 0 20px var(--neon); }
+        .status-bar { font-size: 0.6rem; margin-top: 20px; opacity: 0.5; text-transform: uppercase; }
     </style>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="login-card">
-        <h1>SATELLITE ACCESS</h1>
-        <p>Authorized Personnel Only</p>
-        <br>
-        <button onclick="window.location.href='dashboard.html'">ENTER DASHBOARD</button>
+
+<div class="login-box">
+    <img src="guard_noaa.jpeg" class="logo-img" alt="Logo">
+    <h2>RESTRICTED ACCESS</h2>
+    <div class="input-group">
+        <input type="text" id="user" placeholder="OPERATOR ID">
     </div>
+    <div class="input-group">
+        <input type="password" id="pass" placeholder="SECURITY KEY">
+    </div>
+    <button class="btn" onclick="checkAccess()">INITIALIZE SYSTEM</button>
+    <div class="status-bar" id="status">Secure Satellite Link: Standby</div>
+</div>
+
+<script>
+    function checkAccess() {
+        const status = document.getElementById('status');
+        status.innerHTML = "Authenticating with NOAA Servers...";
+        status.style.color = "var(--neon)";
+        
+        setTimeout(() => {
+            window.location.href = "dashboard_v2.html";
+        }, 1500);
+    }
+</script>
+
 </body>
 </html> 
