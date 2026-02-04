@@ -1,0 +1,100 @@
+	<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mission Intelligence | NOAA-GUARD</title>
+    <style>
+        :root {
+            --neon-blue: #00f2ff;
+            --neon-red: #ff3131;
+            --bg-dark: #020c1b;
+            --glass: rgba(255, 255, 255, 0.03);
+        }
+        body {
+            margin: 0;
+            background: var(--bg-dark);
+            color: #e0e0e0;
+            font-family: 'Exo', sans-serif; /* Professional Space Font */
+            overflow-x: hidden;
+        }
+        .hero {
+            height: 40vh;
+            background: linear-gradient(rgba(2,12,27,0.8), rgba(2,12,27,0.8)), url('https://www.nasa.gov/wp-content/uploads/2023/03/solar-flare.jpg');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-bottom: 2px solid var(--neon-blue);
+        }
+        .container { max-width: 1100px; margin: -50px auto 50px; padding: 20px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; }
+        .glass-card {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 242, 255, 0.2);
+            padding: 30px;
+            border-radius: 20px;
+            transition: 0.3s;
+        }
+        .glass-card:hover { border-color: var(--neon-blue); transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0, 242, 255, 0.1); }
+        h1, h2, h3 { color: var(--neon-blue); text-transform: uppercase; letter-spacing: 3px; }
+        .highlight { color: var(--neon-red); font-weight: bold; }
+        .back-btn {
+            position: absolute; top: 20px; left: 20px;
+            padding: 10px 20px; border: 1px solid var(--neon-blue);
+            color: var(--neon-blue); text-decoration: none; border-radius: 5px;
+            background: rgba(0, 242, 255, 0.1); transition: 0.3s;
+        }
+        .back-btn:hover { background: var(--neon-blue); color: black; }
+        .tech-list { list-style: none; padding: 0; }
+        .tech-list li { margin-bottom: 15px; padding-left: 20px; border-left: 2px solid var(--neon-blue); }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div class="hero">
+        	<a s href="dashboard_v2.html" style=" margin-right: 1050px;  color: var(--neon-blue);border: 2px solid var(--neon-blue); padding: 12px 20px; text-decoration: none; border-radius: 30px; font-weight: bold; background: rgba(0, 242, 255, 0.1);"> ← ACCESS LIVE TELEMETRY </a>
+        <h1 style="font-size: 3rem; margin: 0;">PROJECT INTELLIGENCE</h1>
+        <p style="letter-spacing: 5px; opacity: 0.7;">NOAA-GUARD : SATELLITE DEFENSE INITIATIVE</p>
+    </div>
+
+    <div class="container">
+        <div class="grid">
+            <div class="glass-card">
+                <h2>The Mission</h2>
+                <p>As we approach the <span class="highlight">Solar Maximum 2025-26</span>, the frequency of X-class solar flares is increasing. NOAA-GUARD acts as an autonomous watchdog to prevent a global communication blackout.</p>
+            </div>
+
+            <div class="glass-card">
+                <h2>Space Assets</h2>
+                <ul class="tech-list">
+                    <li><strong>DSCOVR Satellite:</strong> Provides early warning for solar wind speed and plasma density from the L1 Lagrange point.</li>
+                    <li><strong>SDO (NASA):</strong> High-resolution imagery of the solar corona using AIA 171 & 193 filters.</li>
+                </ul>
+            </div>
+
+            <div class="glass-card" style="grid-column: span 2;">
+                <h2>Autonomous Defense Protocols</h2>
+                <p>When wind speeds exceed safety thresholds (e.g., > 600 km/s), the system triggers <strong>"GHOST MODE"</strong>. This logic is based on the <strong>Faraday Cage Principle</strong>—protecting sensitive electronics from electromagnetic induction during a geomagnetic storm.</p>
+                <div style="display: flex; gap: 20px; margin-top: 20px;">
+                    <div style="flex: 1; border: 1px dashed var(--neon-blue); padding: 10px; text-align: center;">
+                        <span style="font-size: 0.8rem; opacity: 0.6;">API STATUS</span><br>NOAA/SWPC CONNECTED
+                    </div>
+                    <div style="flex: 1; border: 1px dashed var(--neon-blue); padding: 10px; text-align: center;">
+                        <span style="font-size: 0.8rem; opacity: 0.6;">REFRESH RATE</span><br>LIVE DATA FEED
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer style="text-align: center; margin-top: 50px; opacity: 0.4;">
+            <p>© 2026 NOAA-GUARD SATELLITE OPERATIONS CENTER</p>
+        </footer>
+    </div>
+
+</body>
+</html>
